@@ -72,6 +72,9 @@ type hmacImplementation struct {
 	// Cleanup function
 	cleanup func()
 
+	// Count of updates
+	updates uint64
+
 	// Result, or nil if we don't have the answer yet
 	result []byte
 }
@@ -163,6 +166,7 @@ func (hi *hmacImplementation) initialize() (err error) {
 		hi.cleanup()
 		return
 	}
+	hi.updates = 0
 	hi.result = nil
 	return
 }
@@ -177,6 +181,7 @@ func (hi *hmacImplementation) Write(p []byte) (n int, err error) {
 	if err = hi.session.Ctx.SignUpdate(hi.session.Handle, p); err != nil {
 		return
 	}
+	hi.updates++
 	n = len(p)
 	return
 }
@@ -184,6 +189,13 @@ func (hi *hmacImplementation) Write(p []byte) (n int, err error) {
 func (hi *hmacImplementation) Sum(b []byte) []byte {
 	if hi.result == nil {
 		var err error
+		if hi.updates == 0 {
+			// http://docs.oasis-open.org/pkcs11/pkcs11-base/v2.40/os/pkcs11-base-v2.40-os.html#_Toc322855304
+			// We must ensure that C_SignUpdate is called _at least once_.
+			if err = hi.session.Ctx.SignUpdate(hi.session.Handle, []byte{}); err != nil {
+				panic(err)
+			}
+		}
 		hi.result, err = hi.session.Ctx.SignFinal(hi.session.Handle)
 		hi.cleanup()
 		if err != nil {
