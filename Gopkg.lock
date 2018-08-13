@@ -2,10 +2,11 @@
 
 
 [[projects]]
-  branch = "master"
+  branch = "0len"
   name = "github.com/miekg/pkcs11"
   packages = ["."]
-  revision = "287d9350987cc9334667882061e202e96cdfb4d0"
+  revision = "426021dbd6b5ecf065bf9e0eacf9f38d4f679aa4"
+  source = "github.com/optnfast/pkcs11"
 
 [[projects]]
   name = "github.com/youtube/vitess"
@@ -32,6 +33,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8cd1e283a543a5f16f1a28efc4432ba787658c62e70c42078f5910e9b21a3803"
+  inputs-digest = "73a9042a37935735fd537634f2dbecba59c669bc40850021615cbb300c4c9df5"
   solver-name = "gps-cdcl"
   solver-version = 1
